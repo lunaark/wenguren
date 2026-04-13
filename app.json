@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/intro/intro",
+    "pages/story/story",
+    "pages/ending/ending"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F4EDE0",
+    "navigationBarTitleText": "问古人",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4EDE0",
+    "navigationStyle": "custom"
+  },
+  "sitemapLocation": "sitemap.json"
+}

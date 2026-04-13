@@ -1,0 +1,19 @@
+/* 全局色彩系统 */
+page {
+  --ink: #2A1F1A;
+  --ink-light: #5C4A3A;
+  --ink-faint: #8B7355;
+  --paper: #F4EDE0;
+  --paper-warm: #EDE4D3;
+  --paper-deep: #E2D5BF;
+  --accent-vermilion: #C84B31;
+  --accent-gold: #B8963E;
+  --accent-jade: #5B8C6F;
+  --accent-indigo: #3D5A80;
+
+  font-family: "PingFang SC", "Noto Serif SC", "STSong", serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 30rpx;
+  line-height: 2.0;
+}

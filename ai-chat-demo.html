@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>对话张居正 · 问古人</title>
+<style>
+  :root {
+    --ink: #2A1F1A;
+    --ink-light: #5C4A3A;
+    --ink-faint: #8B7355;
+    --paper: #F4EDE0;
+    --paper-warm: #EDE4D3;
+    --paper-deep: #E2D5BF;
+    --accent-vermilion: #C84B31;
+    --accent-gold: #B8963E;
+    --accent-jade: #5B8C6F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Noto Serif SC", serif;
+    background: var(--paper);
+    color: var(--ink);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  /* === 顶栏 === */
+  .header {
+    padding: 56px 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(42,31,26,0.08);
+    background: linear-gradient(180deg, rgba(184,150,62,0.06) 0%, transparent 100%);
+    flex-shrink: 0;
+  }
+
+  .header-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+  }
+
+  .header-desc {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .header-context {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 12px;
+    background: rgba(184,150,62,0.12);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--accent-gold);
+    letter-spacing: 0.05em;
+  }
+
+  /* === 聊天区 === */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-area::-webkit-scrollbar { display: none; }
+
+  /* 开场白 */
+  .prologue {
+    text-align: center;
+    padding: 20px 10px 28px;
+    opacity: 0;
+    animation: fadeIn 800ms ease 300ms forwards;
+  }
+
+  .prologue-line {
+    display: block;
+    font-size: 13px;
+    line-height: 2;
+    color: var(--ink-faint);
+  }
+
+  .prologue-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .prologue-divider-line {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(42,31,26,0.15), transparent);
+  }
+
+  .prologue-divider-dot {
+    font-size: 8px;
+    color: var(--accent-gold);
+  }
+
+  /* 消息气泡 */
+  .message {
+    display: flex;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: msgIn 500ms ease forwards;
+  }
+
+  .message.user { justify-content: flex-end; }
+  .message.character { justify-content: flex-start; }
+
+  .msg-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .character .msg-avatar {
+    background: linear-gradient(135deg, var(--accent-gold), #D4A843);
+    color: white;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(184,150,62,0.3);
+  }
+
+  .user .msg-avatar {
+    background: var(--paper-deep);
+    color: var(--ink-light);
+    margin-left: 10px;
+    order: 2;
+  }
+
+  .msg-content {
+    max-width: 72%;
+  }
+
+  .msg-sender {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .user .msg-sender {
+    text-align: right;
+  }
+
+  .msg-bubble {
+    padding: 12px 16px;
+    line-height: 1.8;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .character .msg-bubble {
+    background: white;
+    color: var(--ink);
+    border-top-left-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .user .msg-bubble {
+    background: var(--ink);
+    color: var(--paper);
+    border-top-right-radius: 4px;
+  }
+
+  /* 角色引用诗词 */
+  .msg-poem {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(184,150,62,0.08);
+    border-left: 2px solid var(--accent-gold);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    line-height: 2;
+    color: var(--ink-light);
+  }
+
+  /* 打字动画 */
+  .typing {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: msgIn 400ms ease forwards;
+  }
+
+  .typing .msg-avatar {
+    background: linear-gradient(135deg, var(--accent-gold), #D4A843);
+    color: white;
+    margin-right: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(184,150,62,0.3);
+  }
+
+  .typing-dots {
+    background: white;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border-top-left-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    display: flex;
+    gap: 5px;
+  }
+
+  .typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    animation: blink 1.4s infinite;
+  }
+
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  /* 快捷问题 */
+  .quick-questions {
+    padding: 0 16px 12px;
+    flex-shrink: 0;
+  }
+
+  .quick-label {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .quick-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .quick-scroll::-webkit-scrollbar { display: none; }
+
+  .quick-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid rgba(42,31,26,0.1);
+    border-radius: 20px;
+    font-size: 13px;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 200ms ease;
+    white-space: nowrap;
+  }
+
+  .quick-btn:active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* === 输入区 === */
+  .input-area {
+    padding: 12px 16px 32px;
+    border-top: 1px solid rgba(42,31,26,0.08);
+    background: var(--paper);
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .input-box {
+    flex: 1;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid rgba(42,31,26,0.12);
+    border-radius: 22px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
+    resize: none;
+    max-height: 100px;
+    line-height: 1.6;
+    transition: border-color 200ms;
+  }
+
+  .input-box::placeholder {
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+
+  .input-box:focus {
+    border-color: var(--accent-gold);
+  }
+
+  .send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 200ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .send-btn:active {
+    transform: scale(0.92);
+    background: var(--accent-gold);
+  }
+
+  .send-btn.disabled {
+    background: var(--paper-deep);
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+
+  /* === 选择记忆标签 === */
+  .choice-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(200,75,49,0.1);
+    color: var(--accent-vermilion);
+    font-size: 11px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+
+  /* === 动画 === */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes blink {
+    0%, 60%, 100% { opacity: 0.3; }
+    30% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<div class="header">
+  <div class="header-name">张居正</div>
+  <div class="header-desc">明 · 内阁首辅</div>
+  <div class="header-context">基于你的体验「铁腕十年」</div>
+</div>
+
+<!-- 聊天区 -->
+<div class="chat-area" id="chatArea">
+
+  <!-- 开场白 -->
+  <div class="prologue">
+    <span class="prologue-line">你走完了张居正的十年。</span>
+    <span class="prologue-line">现在，你可以与他面对面。</span>
+    <span class="prologue-line" style="color: var(--accent-gold); margin-top: 4px;">他记得你做过的每一个选择。</span>
+    <div class="prologue-divider">
+      <div class="prologue-divider-line"></div>
+      <span class="prologue-divider-dot">◆</span>
+      <div class="prologue-divider-line"></div>
+    </div>
+  </div>
+
+  <!-- 张居正第一句话 -->
+  <div class="message character" style="animation-delay: 1s;">
+    <div class="msg-avatar">张</div>
+    <div class="msg-content">
+      <div class="msg-sender">张居正</div>
+      <div class="msg-bubble">
+        你替我走了一遍这十年。
+        <br><br>
+        感觉如何？——累吧。
+        <br><br>
+        有什么想问我的，尽管问。我这辈子被弹劾了无数次，什么话都听过，你不用客气。
+        <div class="choice-tag">他知道你选择了「铁腕压服」推行一条鞭法</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 用户第一句话 -->
+  <div class="message user" style="animation-delay: 2s;">
+    <div class="msg-avatar">我</div>
+    <div class="msg-content">
+      <div class="msg-sender">你</div>
+      <div class="msg-bubble">你知道自己死后会被清算吗？</div>
+    </div>
+  </div>
+
+  <!-- 张居正回复 -->
+  <div class="message character" style="animation-delay: 3s;">
+    <div class="msg-avatar">张</div>
+    <div class="msg-content">
+      <div class="msg-sender">张居正</div>
+      <div class="msg-bubble">
+        知道？不知道？
+        <br><br>
+        说完全不知道，那是骗你。我把高拱赶走的时候用了什么手段，我心里清楚。我对言官动廷杖的时候，就知道这笔账迟早要还。商鞅的下场我读过不止一遍。
+        <br><br>
+        但你问我是不是「知道」——我觉得不是。我只是隐隐约约觉得，这条路走到头，大概不会太好看。但我没有细想。
+        <br><br>
+        不是不敢想。是不能想。一想，就做不下去了。
+      </div>
+    </div>
+  </div>
+
+  <!-- 用户第二句 -->
+  <div class="message user" style="animation-delay: 4.5s;">
+    <div class="msg-avatar">我</div>
+    <div class="msg-content">
+      <div class="msg-sender">你</div>
+      <div class="msg-bubble">那你觉得值吗？你的家人因为你被抄家，长子自缢了。</div>
+    </div>
+  </div>
+
+  <!-- 张居正回复 - 长沉默后 -->
+  <div class="message character" style="animation-delay: 6s;">
+    <div class="msg-avatar">张</div>
+    <div class="msg-content">
+      <div class="msg-sender">张居正</div>
+      <div class="msg-bubble">
+        ……
+        <br><br>
+        你刚才问的这个问题，是我这辈子最怕被人问的。
+        <br><br>
+        我可以告诉你一条鞭法让国库翻了两倍，考成法让政令不再是废纸，清丈田亩让三百万顷隐田回到了册上。我可以说这些事救了几千万人。
+        <br><br>
+        但我没法替敬修回答这个问题。
+        <br><br>
+        他不是改革者。他只是我的儿子。他替我付的代价，我没有资格说「值」。
+        <div class="msg-poem">
+          "有冤无处诉"<br>
+          ——张敬修 · 绝笔血书
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 快捷问题 -->
+<div class="quick-questions">
+  <div class="quick-label">你可能想问</div>
+  <div class="quick-scroll">
+    <div class="quick-btn" onclick="sendQuick(this)">你后悔夺情留任吗</div>
+    <div class="quick-btn" onclick="sendQuick(this)">万历是你教坏的吗</div>
+    <div class="quick-btn" onclick="sendQuick(this)">你和王安石谁更难</div>
+    <div class="quick-btn" onclick="sendQuick(this)">如果再来一次呢</div>
+    <div class="quick-btn" onclick="sendQuick(this)">你怎么看冯保</div>
+  </div>
+</div>
+
+<!-- 输入区 -->
+<div class="input-area">
+  <textarea class="input-box" id="inputBox" rows="1" placeholder="问张居正一个问题……" oninput="autoGrow(this); toggleSend();"></textarea>
+  <button class="send-btn disabled" id="sendBtn" onclick="sendMessage()">↑</button>
+</div>
+
+<script>
+  // 自动增长文本框
+  function autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+  }
+
+  // 切换发送按钮状态
+  function toggleSend() {
+    var btn = document.getElementById('sendBtn');
+    var input = document.getElementById('inputBox');
+    if (input.value.trim()) {
+      btn.classList.remove('disabled');
+    } else {
+      btn.classList.add('disabled');
+    }
+  }
+
+  // 发送快捷问题
+  function sendQuick(el) {
+    var text = el.textContent;
+    addUserMessage(text);
+    el.style.opacity = '0.4';
+    el.style.pointerEvents = 'none';
+
+    // 模拟打字中
+    setTimeout(function() {
+      showTyping();
+    }, 600);
+
+    // 模拟回复
+    setTimeout(function() {
+      hideTyping();
+      if (text.indexOf('万历') !== -1) {
+        addCharacterMessage('万历是不是我教坏的？\n\n不。他是我管得太严、压得太死，以至于我一松手他就报复性地放飞了。\n\n这跟「教坏」不一样。教坏是方向错了。我的方向没错——但我忘了一件事：他不只是皇帝，他也是一个人。人被压久了，反弹是必然的。\n\n你在体验里也看到了。他看我的那个眼神——恐惧里面裹着怨恨。那个眼神我到死都记得。');
+      } else if (text.indexOf('夺情') !== -1) {
+        addCharacterMessage('后悔？你是问我后不后悔没回去给父亲守孝？\n\n我告诉你，如果时间倒流，我还是会留下来。一条鞭法刚起草，考成法正在深化，我走了这些全完了。\n\n但后不后悔和对不对是两码事。我不后悔这个选择，但我知道这个选择是错的——对父亲是错的。\n\n我这辈子做了很多「对国家对、对家人错」的事。这是改革者的通病。');
+      } else if (text.indexOf('王安石') !== -1) {
+        addCharacterMessage('王安石比我难。\n\n我有李太后撑腰，有冯保在宫里照应，万历年幼听我的话。我的牌比他好得多。\n\n王安石面对的是一个成年皇帝——神宗一开始支持他，后来动摇了，反反复复。他的变法团队里还出了吕惠卿这种背刺他的人。\n\n但他比我少一样东西：他没有我这么狠。他不愿意用廷杖压反对派，不愿意搞政治清洗。所以他失败了。\n\n我用了他不愿意用的手段，所以我成功了。但我付的代价也比他大。\n\n你说谁更难？也许该问的是——谁更苦。');
+      } else if (text.indexOf('再来') !== -1) {
+        addCharacterMessage('如果再来一次。\n\n……\n\n我大概还是会做一样的事。考成法、清丈、一条鞭法，一样都不能少。\n\n但有一件事我会改。我会对万历好一点。\n\n不是放松对他的管教——该严的还是要严。但我会让他知道，我管他不是因为看不起他，是因为我希望他好。\n\n我从来没有跟他说过这句话。我以为我做的一切他都能看懂。但他那时候只是一个孩子。孩子需要的不只是规矩，还有一句「我是为你好」。\n\n我连这句话都没说过。');
+      } else if (text.indexOf('冯保') !== -1) {
+        addCharacterMessage('冯保啊。\n\n你让我怎么说他？他帮我赶走了高拱，帮我在宫里挡了无数暗箭。没有他，我当不了首辅，改革也推不动。\n\n但他贪。贪得没有底线。我知道，我睁一只眼闭一只眼。因为我需要他。\n\n这是我这辈子最脏的一笔交易——用纵容换支持。我骂别人贪腐的时候，心里清楚自己的盟友就是最大的贪官之一。\n\n后来他被抄家，抄出来的东西堆满了几间屋子。我已经死了，看不见了。但我猜到了。');
+      }
+    }, 2000);
+  }
+
+  // 发送用户消息
+  function sendMessage() {
+    var input = document.getElementById('inputBox');
+    var text = input.value.trim();
+    if (!text) return;
+
+    addUserMessage(text);
+    input.value = '';
+    input.style.height = 'auto';
+    toggleSend();
+
+    setTimeout(function() { showTyping(); }, 600);
+    setTimeout(function() {
+      hideTyping();
+      addCharacterMessage('你这个问题问得好。但容我想一想——有些事情隔了四百年再看，反而比当时更难回答。\n\n（这是演示原型，实际对话将由AI生成，基于你在故事中的选择和历史资料）');
+    }, 2500);
+  }
+
+  function addUserMessage(text) {
+    var chatArea = document.getElementById('chatArea');
+    var div = document.createElement('div');
+    div.className = 'message user';
+    div.innerHTML = '<div class="msg-avatar">我</div><div class="msg-content"><div class="msg-sender">你</div><div class="msg-bubble">' + text + '</div></div>';
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function addCharacterMessage(text) {
+    var chatArea = document.getElementById('chatArea');
+    var div = document.createElement('div');
+    div.className = 'message character';
+    var formatted = text.replace(/\n/g, '<br>');
+    div.innerHTML = '<div class="msg-avatar">张</div><div class="msg-content"><div class="msg-sender">张居正</div><div class="msg-bubble">' + formatted + '</div></div>';
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function showTyping() {
+    var chatArea = document.getElementById('chatArea');
+    var div = document.createElement('div');
+    div.className = 'typing';
+    div.id = 'typingIndicator';
+    div.innerHTML = '<div class="msg-avatar">张</div><div class="typing-dots"><span></span><span></span><span></span></div>';
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function hideTyping() {
+    var el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+  }
+
+  // 回车发送
+  document.getElementById('inputBox').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // 滚动到底部
+  setTimeout(function() {
+    document.getElementById('chatArea').scrollTop = document.getElementById('chatArea').scrollHeight;
+  }, 6500);
+</script>
+</body>
+</html>

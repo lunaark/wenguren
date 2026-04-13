@@ -1,0 +1,70 @@
+<view class="index-page">
+  <view class="safe-area" style="padding-top: {{statusBarHeight}}px">
+
+    <!-- 顶部标题 -->
+    <view class="header">
+      <text class="title">问古人</text>
+      <text class="slogan">沉浸式历史体验</text>
+    </view>
+
+    <!-- 可体验人物卡片 -->
+    <block wx:for="{{characters}}" wx:key="name">
+
+      <!-- 单篇人物：整张卡片可点击 -->
+      <view wx:if="{{item.isSingle}}" class="main-card" bindtap="onCharTap" data-id="{{item.id}}">
+        <text class="card-glyph" style="color: {{item.glyphColor}}">{{item.glyph}}</text>
+        <text class="card-dynasty">{{item.dynasty}}</text>
+        <text class="card-name">{{item.name}}</text>
+        <text class="card-subtitle">{{item.subtitle}}</text>
+        <view class="card-meta">
+          <text class="meta-item">{{item.duration}}</text>
+          <text class="meta-dot">·</text>
+          <text class="meta-item">{{item.choiceCount}}次抉择</text>
+        </view>
+        <view wx:if="{{item.completed}}" class="card-badge">
+          <text>已体验</text>
+        </view>
+      </view>
+
+      <!-- 多篇人物：人物名 + 篇章列表 -->
+      <view wx:else class="main-card multi-card">
+        <text class="card-glyph" style="color: {{item.glyphColor}}">{{item.glyph}}</text>
+        <text class="card-dynasty">{{item.dynasty}}</text>
+        <text class="card-name">{{item.name}}</text>
+        <view class="chapter-list">
+          <view wx:for="{{item.chapters}}" wx:for-item="ch" wx:key="id"
+                class="chapter-item" bindtap="onCharTap" data-id="{{ch.id}}">
+            <view class="chapter-left">
+              <text class="chapter-label">{{ch.label}}</text>
+              <text class="chapter-subtitle">{{ch.subtitle}}</text>
+            </view>
+            <view class="chapter-right">
+              <view class="chapter-meta">
+                <text class="meta-item">{{ch.duration}}</text>
+                <text class="meta-dot">·</text>
+                <text class="meta-item">{{ch.choiceCount}}次抉择</text>
+              </view>
+              <view wx:if="{{ch.completed}}" class="chapter-badge">
+                <text>已体验</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+    </block>
+
+    <!-- 即将上线 -->
+    <view class="section-label">
+      <text>即将上线</text>
+    </view>
+    <view class="coming-grid">
+      <view wx:for="{{comingSoon}}" wx:key="id" class="coming-card" bindtap="onComingTap">
+        <text class="coming-dynasty">{{item.dynasty}}</text>
+        <text class="coming-name">{{item.name}}</text>
+        <text class="coming-subtitle">{{item.subtitle}}</text>
+      </view>
+    </view>
+
+  </view>
+</view>

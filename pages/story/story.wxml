@@ -1,0 +1,87 @@
+<view class="story-page">
+  <!-- 顶部进度条 -->
+  <view class="progress-bar" style="width: {{progress}}%"></view>
+
+  <!-- 粘性顶栏 -->
+  <view class="header" style="height: {{headerHeight}}px">
+    <view class="header-inner" style="margin-top: {{statusBarHeight}}px; height: {{headerHeight - statusBarHeight}}px">
+      <view class="header-back" bindtap="onBackTap">
+        <text class="back-arrow">‹</text>
+      </view>
+      <text class="header-chapter">{{chapter}}</text>
+    </view>
+  </view>
+
+  <!-- 内容区 -->
+  <view class="body" style="padding-top: {{headerHeight + 24}}px">
+    <!-- 年代标签 -->
+    <view wx:if="{{year}}" class="year-tag anim-fade">
+      <text>{{year}}</text>
+    </view>
+
+    <block wx:for="{{scenes}}" wx:key="index">
+
+      <!-- 氛围描写 -->
+      <view wx:if="{{item.type === 'atmosphere'}}" class="scene-atmosphere anim-fade" style="animation-delay: {{item._delay}}ms">
+        <text>{{item.text}}</text>
+      </view>
+
+      <!-- 正文叙述 -->
+      <view wx:elif="{{item.type === 'narration'}}" class="scene-narration anim-fade" style="animation-delay: {{item._delay}}ms">
+        <text>{{item.text}}</text>
+      </view>
+
+      <!-- 对话 -->
+      <view wx:elif="{{item.type === 'dialogue'}}" class="scene-dialogue anim-fade" style="animation-delay: {{item._delay}}ms">
+        <text class="dialogue-speaker">{{item.speaker}}</text>
+        <text class="dialogue-text">{{item.text}}</text>
+      </view>
+
+      <!-- 时间过渡 -->
+      <view wx:elif="{{item.type === 'transition'}}" class="scene-transition anim-fade" style="animation-delay: {{item._delay}}ms">
+        <text class="transition-year">{{item.year}}</text>
+        <text class="transition-desc">{{item.desc}}</text>
+      </view>
+
+      <!-- 分隔符 -->
+      <view wx:elif="{{item.type === 'divider'}}" class="scene-divider anim-fade" style="animation-delay: {{item._delay}}ms">
+        <view class="divider-line"></view>
+        <text class="divider-diamond">◆</text>
+        <view class="divider-line"></view>
+      </view>
+
+      <!-- 诗词展示 -->
+      <view wx:elif="{{item.type === 'poem'}}" class="scene-poem anim-fade" style="animation-delay: {{item._delay}}ms">
+        <text class="poem-title">{{item.title}}</text>
+        <view class="poem-lines">
+          <text wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this" class="poem-line">{{line}}</text>
+        </view>
+        <text wx:if="{{item.note}}" class="poem-note">{{item.note}}</text>
+      </view>
+
+    </block>
+
+    <!-- 选择按钮区 -->
+    <view wx:if="{{actionType === 'choice'}}" class="choices-container anim-fade" style="animation-delay: {{choiceDelay}}ms">
+      <text class="choices-prompt">— {{actionPrompt}} —</text>
+      <view wx:for="{{options}}" wx:key="index" class="choice-btn" bindtap="onChoiceTap" data-index="{{index}}">
+        <text>{{item.text}}</text>
+      </view>
+    </view>
+
+    <!-- 继续按钮 -->
+    <view wx:if="{{actionType === 'continue'}}" class="continue-container anim-fade" style="animation-delay: {{choiceDelay}}ms">
+      <view class="btn-continue" bindtap="onContinueTap">
+        <text>继 续</text>
+      </view>
+    </view>
+
+    <!-- 底部留白 -->
+    <view class="bottom-spacer"></view>
+  </view>
+
+  <!-- 性格提示闪现 -->
+  <view class="personality-flash {{flashVisible ? 'show' : ''}}">
+    <text>{{flashText}}</text>
+  </view>
+</view>

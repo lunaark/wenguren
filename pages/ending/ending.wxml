@@ -1,0 +1,62 @@
+<view class="ending-page">
+  <view class="ending-container" style="padding-top: {{statusBarHeight + 40}}px">
+
+    <!-- 尾声标签 -->
+    <text class="ending-label">尾 声</text>
+
+    <!-- 尾声文字 -->
+    <view class="ending-epilogue">
+      <text wx:for="{{epilogueLines}}" wx:key="*this" class="epilogue-line">{{item}}</text>
+    </view>
+
+    <!-- 分隔 -->
+    <view class="ending-divider">
+      <view class="divider-line"></view>
+      <text class="divider-diamond">◆</text>
+      <view class="divider-line"></view>
+    </view>
+
+    <!-- 统计数据 -->
+    <view class="ending-stats">
+      <view wx:for="{{stats}}" wx:key="label" class="stat-item">
+        <text class="stat-num">{{item.num}}</text>
+        <text class="stat-label">{{item.label}}</text>
+      </view>
+    </view>
+
+    <!-- 性格分析卡片 -->
+    <view class="ending-analysis">
+      <text class="analysis-title">— 你的选择映射 —</text>
+      <view wx:for="{{analysis}}" wx:key="name" class="analysis-item">
+        <text class="analysis-text">{{item.text}}</text>
+      </view>
+    </view>
+
+    <!-- 反思文字 -->
+    <view class="ending-reflection">
+      <text wx:for="{{reflectionLines}}" wx:key="*this" class="reflection-line">{{item}}</text>
+    </view>
+
+    <!-- 分享按钮 -->
+    <view class="ending-share anim-fade-delay">
+      <button class="btn-share" open-type="share">分享给好友</button>
+    </view>
+
+    <!-- 按钮区 -->
+    <view class="ending-actions">
+      <view class="btn-action btn-restart" bindtap="onRestart">
+        <text>重新体验</text>
+      </view>
+      <view class="btn-action btn-home" bindtap="onGoHome">
+        <text>返回首页</text>
+      </view>
+    </view>
+
+    <!-- 预告卡片 -->
+    <view class="ending-coming-soon">
+      <text wx:for="{{comingSoonLines}}" wx:key="*this" class="coming-soon-line">{{item}}</text>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </view>
+</view>

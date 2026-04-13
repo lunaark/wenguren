@@ -1,0 +1,8 @@
+_cacache/
+_logs/
+_npx/
+_update-notifier-last-checked
+node_modules/
+miniprogram_npm/
+.DS_Store
+project.private.config.json

@@ -1,0 +1,37 @@
+<view class="intro-page">
+  <view class="intro-container" style="padding-top: {{statusBarHeight + 60}}px">
+
+    <!-- 朝代 -->
+    <text class="intro-dynasty">{{dynasty}}</text>
+
+    <!-- 人物名 -->
+    <text class="intro-name">{{name}}</text>
+
+    <!-- 分隔线 -->
+    <view class="intro-divider"></view>
+
+    <!-- 名句 -->
+    <text class="intro-quote">「{{quote}}」</text>
+
+    <!-- 简介 -->
+    <text class="intro-desc">{{intro}}</text>
+
+    <!-- 信息 -->
+    <view class="intro-meta">
+      <text class="meta-item">{{duration}}</text>
+      <text class="meta-dot">·</text>
+      <text class="meta-item">{{choiceCount}}次抉择</text>
+    </view>
+
+    <!-- 开始按钮 -->
+    <view class="btn-start" bindtap="onStartTap">
+      <text>开 始 体 验</text>
+    </view>
+
+    <!-- 返回 -->
+    <view class="btn-back" bindtap="onBackTap">
+      <text>返回</text>
+    </view>
+
+  </view>
+</view>

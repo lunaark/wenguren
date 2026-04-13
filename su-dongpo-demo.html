@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>试为苏东坡 — 乌台诗案</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;400;600;700;900&family=ZCOOL+XiaoWei&display=swap');
+
+  :root {
+    --ink: #2A1F1A;
+    --ink-light: #5C4A3A;
+    --ink-faint: #8B7355;
+    --paper: #F4EDE0;
+    --paper-warm: #EDE4D3;
+    --paper-deep: #E2D5BF;
+    --accent-vermilion: #C84B31;
+    --accent-gold: #B8963E;
+    --accent-jade: #5B8C6F;
+    --accent-indigo: #3D5A80;
+    --shadow: rgba(42, 31, 26, 0.12);
+    --glow: rgba(184, 150, 62, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === TEXTURE OVERLAY === */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* === SCREENS === */
+  .screen {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* === TITLE SCREEN === */
+  #title-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    background: 
+      radial-gradient(ellipse at 30% 20%, rgba(184, 150, 62, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(91, 140, 111, 0.06) 0%, transparent 50%),
+      var(--paper);
+  }
+
+  .title-container {
+    max-width: 560px;
+    animation: titleFadeIn 1.5s ease-out;
+  }
+
+  @keyframes titleFadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-era {
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    color: var(--ink-faint);
+    margin-bottom: 2rem;
+    font-weight: 400;
+  }
+
+  .title-main {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-size: clamp(2.8rem, 8vw, 4.2rem);
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .title-sub {
+    font-size: 1rem;
+    color: var(--ink-light);
+    font-weight: 400;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .title-quote {
+    font-size: 0.95rem;
+    color: var(--accent-vermilion);
+    font-style: italic;
+    margin: 2.5rem 0;
+    letter-spacing: 0.08em;
+    opacity: 0;
+    animation: quoteFade 1s ease-out 0.8s forwards;
+  }
+
+  @keyframes quoteFade {
+    to { opacity: 1; }
+  }
+
+  .title-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--accent-gold);
+    margin: 0 auto 2.5rem;
+    opacity: 0;
+    animation: dividerGrow 0.8s ease-out 0.5s forwards;
+  }
+
+  @keyframes dividerGrow {
+    to { opacity: 1; width: 60px; }
+  }
+
+  .title-chapter-hint {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.3em;
+    margin-bottom: 2rem;
+  }
+
+  /* === BUTTONS === */
+  .btn-start {
+    display: inline-block;
+    padding: 1rem 3.5rem;
+    background: transparent;
+    border: 1px solid var(--ink-light);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    opacity: 0;
+    animation: btnAppear 0.6s ease-out 1.2s forwards;
+  }
+
+  @keyframes btnAppear {
+    to { opacity: 1; }
+  }
+
+  .btn-start:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* === NARRATIVE SCREEN === */
+  #narrative-screen {
+    background: var(--paper);
+  }
+
+  .narrative-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 1.2rem 2rem;
+    background: rgba(244, 237, 224, 0.92);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(42, 31, 26, 0.06);
+  }
+
+  .header-chapter {
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--ink-faint);
+  }
+
+  .header-year {
+    font-size: 0.75rem;
+    color: var(--accent-gold);
+    letter-spacing: 0.15em;
+  }
+
+  .narrative-body {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+    flex: 1;
+  }
+
+  /* === TEXT CONTENT === */
+  .story-text {
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: textReveal 0.8s ease-out forwards;
+  }
+
+  .story-text p {
+    font-size: 1.05rem;
+    line-height: 2;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+    text-align: justify;
+  }
+
+  .story-text p:last-child { margin-bottom: 0; }
+
+  @keyframes textReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scene description / atmosphere text */
+  .scene-desc {
+    font-size: 0.9rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    border-left: 2px solid var(--accent-gold);
+    padding-left: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.9;
+    opacity: 0;
+    animation: textReveal 0.8s ease-out 0.3s forwards;
+  }
+
+  /* Dialogue */
+  .dialogue {
+    margin: 2rem 0;
+    padding: 1.5rem 1.8rem;
+    background: rgba(226, 213, 191, 0.4);
+    border-radius: 4px;
+    position: relative;
+    opacity: 0;
+    animation: textReveal 0.6s ease-out 0.2s forwards;
+  }
+
+  .dialogue-speaker {
+    font-size: 0.8rem;
+    color: var(--accent-vermilion);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+  }
+
+  .dialogue-text {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+
+  /* === CHOICES === */
+  .choices-container {
+    margin-top: 3rem;
+    opacity: 0;
+    animation: choicesAppear 0.8s ease-out 0.6s forwards;
+  }
+
+  @keyframes choicesAppear {
+    to { opacity: 1; }
+  }
+
+  .choices-prompt {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--ink-faint);
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .choice-btn {
+    display: block;
+    width: 100%;
+    padding: 1.3rem 1.8rem;
+    margin-bottom: 1rem;
+    background: rgba(244, 237, 224, 0.6);
+    border: 1px solid rgba(42, 31, 26, 0.12);
+    border-radius: 4px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .choice-btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent-gold);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .choice-btn:hover {
+    background: rgba(226, 213, 191, 0.5);
+    border-color: var(--accent-gold);
+    padding-left: 2.2rem;
+  }
+
+  .choice-btn:hover::before {
+    transform: scaleY(1);
+  }
+
+  .choice-btn:active {
+    transform: scale(0.98);
+  }
+
+  .choice-label {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  /* === CONTINUE BUTTON === */
+  .btn-continue {
+    display: block;
+    margin: 3rem auto 0;
+    padding: 0.9rem 3rem;
+    background: transparent;
+    border: 1px solid rgba(42, 31, 26, 0.2);
+    color: var(--ink-light);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: btnAppear 0.6s ease-out 0.8s forwards;
+  }
+
+  .btn-continue:hover {
+    border-color: var(--ink-light);
+    color: var(--ink);
+  }
+
+  /* === TRANSITION === */
+  .scene-transition {
+    text-align: center;
+    padding: 4rem 2rem;
+    opacity: 0;
+    animation: transitionIn 1.2s ease-out forwards;
+  }
+
+  @keyframes transitionIn {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  .transition-year {
+    font-size: 2rem;
+    font-weight: 200;
+    color: var(--accent-gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.5rem;
+  }
+
+  .transition-desc {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.15em;
+  }
+
+  /* === ENDING SCREEN === */
+  #ending-screen {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    min-height: 100vh;
+    background: 
+      radial-gradient(ellipse at 50% 40%, var(--glow) 0%, transparent 60%),
+      var(--paper);
+  }
+
+  .ending-container {
+    max-width: 520px;
+    opacity: 0;
+    animation: titleFadeIn 1.5s ease-out 0.3s forwards;
+  }
+
+  .ending-poem {
+    font-size: 1.15rem;
+    line-height: 2.2;
+    color: var(--ink);
+    margin-bottom: 3rem;
+    font-style: italic;
+  }
+
+  .ending-reflection {
+    padding: 2rem;
+    background: rgba(226, 213, 191, 0.3);
+    border-radius: 6px;
+    margin-bottom: 2.5rem;
+  }
+
+  .ending-reflection-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--accent-gold);
+    margin-bottom: 1rem;
+  }
+
+  .ending-reflection-text {
+    font-size: 0.95rem;
+    line-height: 2;
+    color: var(--ink-light);
+  }
+
+  .ending-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 1.8rem;
+    font-weight: 200;
+    color: var(--accent-gold);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    margin-top: 0.3rem;
+  }
+
+  .btn-restart {
+    display: inline-block;
+    padding: 0.9rem 2.5rem;
+    background: transparent;
+    border: 1px solid var(--ink-light);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 0.5rem;
+  }
+
+  .btn-restart:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* === PROGRESS BAR === */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-vermilion));
+    z-index: 999;
+    transition: width 0.6s ease;
+  }
+
+  /* === PERSONALITY TRACKER (hidden) === */
+  .personality-flash {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 0.7rem 1.5rem;
+    background: rgba(42, 31, 26, 0.85);
+    color: var(--paper);
+    font-size: 0.8rem;
+    border-radius: 4px;
+    opacity: 0;
+    transition: all 0.5s ease;
+    z-index: 200;
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+
+  .personality-flash.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* === MOBILE === */
+  @media (max-width: 600px) {
+    .narrative-body { padding: 2rem 1.5rem 5rem; }
+    .title-main { font-size: 2.4rem; }
+    .story-text p { font-size: 1rem; }
+    .ending-stats { gap: 1.5rem; }
+  }
+
+  /* Fade out animation for screen transitions */
+  .fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; transform: translateY(-10px); }
+  }
+
+  .ink-wash-divider {
+    width: 100%;
+    height: 40px;
+    margin: 2rem 0;
+    background: radial-gradient(ellipse at center, rgba(42,31,26,0.06) 0%, transparent 70%);
+    position: relative;
+  }
+
+  .ink-wash-divider::after {
+    content: '◆';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.5rem;
+    color: var(--accent-gold);
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="personality-flash" id="personalityFlash"></div>
+
+<!-- TITLE SCREEN -->
+<div class="screen active" id="title-screen">
+  <div class="title-container">
+    <div class="title-era">北 宋 · 元 丰 二 年</div>
+    <div class="title-divider"></div>
+    <h1 class="title-main">试 为 苏 东 坡</h1>
+    <p class="title-sub">从乌台诗案到黄州寒食</p>
+    <p class="title-quote">「问汝平生功业，黄州惠州儋州。」</p>
+    <div class="title-chapter-hint">第一章 · 风 暴 将 至</div>
+    <button class="btn-start" onclick="startGame()">开 始 体 验</button>
+  </div>
+</div>
+
+<!-- NARRATIVE SCREEN -->
+<div class="screen" id="narrative-screen">
+  <div class="narrative-header">
+    <span class="header-chapter" id="chapterLabel">第一章</span>
+    <span class="header-year" id="yearLabel">元丰二年</span>
+  </div>
+  <div class="narrative-body" id="narrativeBody">
+    <!-- Dynamic content -->
+  </div>
+</div>
+
+<!-- ENDING SCREEN -->
+<div class="screen" id="ending-screen">
+  <div class="ending-container" id="endingContent">
+    <!-- Dynamic ending -->
+  </div>
+</div>
+
+<script>
+// ========== GAME ENGINE ==========
+const state = {
+  currentNode: null,
+  choices: [],
+  traits: {
+    courage: 0,    // 勇气 vs 隐忍
+    idealism: 0,   // 理想 vs 务实
+    connection: 0, // 入世 vs 出世
+    resilience: 0  // 坚韧 vs 脆弱
+  },
+  nodeCount: 0,
+  totalNodes: 12
+};
+
+// ========== STORY DATA ==========
+const story = {
+
+// === ACT 1: THE STORM ===
+"start": {
+  chapter: "第一章 · 风暴将至",
+  year: "元丰二年 · 七月",
+  content: `
+    <div class="scene-desc">湖州。夏末。蝉鸣如沸。</div>
+    <div class="story-text">
+      <p>你刚到湖州任知州不过三个月。江南的夏天潮湿闷热，你坐在官署里批完公文，顺手写了几首诗寄给朋友。</p>
+      <p>诗里有几句牢骚——朝廷推行的新法让百姓怨声载道，你看不惯，就写了出来。这不是第一次了，你向来嘴上不饶人。</p>
+      <p>你不知道的是，这些诗正在被人一首一首地摘录、注解、装订成册，送往御史台。</p>
+    </div>
+    <div class="dialogue">
+      <div class="dialogue-speaker">幕僚</div>
+      <div class="dialogue-text">大人，京中来了人。说是奉御史台之命……</div>
+    </div>
+    <div class="story-text">
+      <p>你放下茶盏。御史台派人来湖州，这不寻常。你看见来人身后跟着的皇甫遵，面无表情。</p>
+      <p>你心里明白了大半。</p>
+    </div>
+  `,
+  choices: [
+    { text: "整理衣冠，从容出迎。该来的躲不掉。", next: "arrest_calm", trait: "courage", value: 2 },
+    { text: "先稳住，找借口拖延，连夜给京中的朋友写信求援。", next: "arrest_delay", trait: "idealism", value: -1 }
+  ]
+},
+
+"arrest_calm": {
+  chapter: "第一章 · 风暴将至",
+  year: "元丰二年 · 七月",
+  content: `
+    <div class="story-text">
+      <p>你换上官服，走出厅堂。皇甫遵看见你，微微一愣——大概没料到你这么平静。</p>
+      <p>「苏轼接旨。」</p>
+      <p>你跪下听完。御史台弹劾你以诗文讪谤朝政，即刻押赴京城受审。</p>
+      <p>你站起来的时候腿有点软，但脸上没有露出来。身后传来衙役和家人的哭声，你回头看了一眼妻子王闰之，她抱着孩子站在廊下，眼眶红了但没有哭出声。</p>
+    </div>
+    <div class="story-text">
+      <p>你转过身，跟着皇甫遵走了。</p>
+      <p>一路上你想了很多。你想起王安石变法那年你第一次上书反对，想起弟弟子由劝你少说话，想起父亲当年教你读书时说的「文章是天下公器，不可以私意乱之」。</p>
+    </div>
+  `,
+  continue: "prison_arrive"
+},
+
+"arrest_delay": {
+  chapter: "第一章 · 风暴将至",
+  year: "元丰二年 · 七月",
+  content: `
+    <div class="story-text">
+      <p>你推说身体不适，让幕僚先去接待。自己匆匆铺开纸，给京城的王诜和驸马写信——他们在朝中还有些人脉。</p>
+      <p>但信刚写了一半，皇甫遵已经带人闯了进来。</p>
+      <p>「苏轼，御史台令你即刻进京，不得拖延。」</p>
+      <p>你看着写到一半的信，墨迹未干。皇甫遵顺着你的目光也看到了，什么也没说，只是催促你尽快上路。</p>
+    </div>
+    <div class="story-text">
+      <p>你心里发苦。不是怕死——当了这么多年官，你比谁都清楚，文字狱一旦开头，辩解是没有用的。你发苦的是连累了别人。那些跟你通信的朋友、收过你诗的人，一个都跑不掉。</p>
+    </div>
+  `,
+  continue: "prison_arrive"
+},
+
+"prison_arrive": {
+  chapter: "第一章 · 风暴将至",
+  year: "元丰二年 · 八月",
+  content: `
+    <div class="scene-desc">御史台狱。又称「乌台」。高墙之内，柏树上栖满乌鸦。</div>
+    <div class="story-text">
+      <p>你被关进了乌台大狱。牢房潮湿阴暗，你是堂堂三品官员，此刻却和普通囚犯一样席地而坐。</p>
+      <p>审讯很快开始了。御史们把你这些年写的诗翻了个遍，逐字逐句地追问：「这句'根到九泉无曲处，世间唯有蛰龙知'，是什么意思？你说的蛰龙是不是在影射陛下？」</p>
+      <p>你知道这是欲加之罪。但在这间牢房里，逻辑和道理都不重要了。</p>
+    </div>
+    <div class="dialogue">
+      <div class="dialogue-speaker">审讯御史</div>
+      <div class="dialogue-text">苏轼，你最好老实交代，不要妄想蒙混过关。你的诗里藏了多少对朝廷的怨恨？</div>
+    </div>
+  `,
+  choices: [
+    { text: "一条条辩解，据理力争。那些诗就是写景抒情，哪有什么影射。", next: "prison_defiant", trait: "courage", value: 2, flash: "你选择了正面对抗" },
+    { text: "低头认错，把他们想听的话说了。保命要紧。", next: "prison_submit", trait: "courage", value: -1, flash: "你选择了以退为进" },
+    { text: "沉默。不辩解也不认错。说什么都是错。", next: "prison_silent", trait: "resilience", value: 1, flash: "你选择了沉默以对" }
+  ]
+},
+
+"prison_defiant": {
+  chapter: "第二章 · 乌台风雨",
+  year: "元丰二年 · 八至十二月",
+  content: `
+    <div class="story-text">
+      <p>你逐首解释，引经据典，说明每一句诗的来历和用意。你说得有理有据，御史们一时语塞。</p>
+      <p>但这反而激怒了他们。第二天审讯变本加厉，连你二十年前写的诗都翻出来了。有人提议将你处以极刑。</p>
+      <p>一百三十天。你在乌台待了一百三十天。</p>
+      <p>每天晚上，你听着牢房外的乌鸦叫声，想着白天审讯时自己说的话是不是又给朋友们添了麻烦。你开始后悔的不是写那些诗，而是想——也许自己没必要在牢里还逞口舌之快。</p>
+    </div>
+  `,
+  continue: "rescue"
+},
+
+"prison_submit": {
+  chapter: "第二章 · 乌台风雨",
+  year: "元丰二年 · 八至十二月",
+  content: `
+    <div class="story-text">
+      <p>你低下头，把他们想要的供词签了。承认部分诗句确有「讥讽之意」。</p>
+      <p>签完的那一刻你觉得恶心。不是因为认了不该认的罪，而是你突然意识到——你苏轼，一辈子最看不起的就是说假话的人，现在自己也成了其中之一。</p>
+      <p>一百三十天。审讯断断续续，你在阴暗的牢房里度过了整个秋天和初冬。低头并没有让事情变好多少，他们要的不是你的态度，是你的命。</p>
+    </div>
+  `,
+  continue: "rescue"
+},
+
+"prison_silent": {
+  chapter: "第二章 · 乌台风雨",
+  year: "元丰二年 · 八至十二月",
+  content: `
+    <div class="story-text">
+      <p>你什么也不说。御史们问什么，你就沉默。沉默让他们比暴怒更不安。</p>
+      <p>「苏轼，你以为不说话就能过关？」</p>
+      <p>你不是以为不说话能过关。你只是觉得累了。从二十岁进京赶考到现在，你一直在说话——写诗、上书、辩论、讥讽。说了二十多年，说到进了大牢。也许该歇歇了。</p>
+      <p>一百三十天的沉默。牢房里没有笔墨，你只能在脑子里写诗。有些句子写了又忘，有些句子忘不掉，到死都忘不掉。</p>
+    </div>
+  `,
+  continue: "rescue"
+},
+
+"rescue": {
+  chapter: "第二章 · 乌台风雨",
+  year: "元丰二年 · 十二月",
+  content: `
+    <div class="story-text">
+      <p>狱中的日子漫长得像一辈子。你以为自己会死在这里。</p>
+      <p>你不知道的是，墙外有很多人在为你奔走。</p>
+      <p>弟弟苏辙上书朝廷，愿意交出自己的官职来换你的命。曹太后（仁宗的皇后）对神宗说：「苏轼兄弟是先帝看重的人才，不可因诗获罪。」就连已经退隐的王安石，你政治上最大的对手，也写了一封信：「岂有盛世而杀才士者乎？」</p>
+    </div>
+    <div class="story-text">
+      <p>十二月底，判决下来了。</p>
+      <p>死罪免了。贬为黄州团练副使，不得签署公事。</p>
+      <p>团练副使——一个没有任何实权的虚职，相当于流放。</p>
+    </div>
+    <div class="scene-desc">你活了下来。但你的人生，从此分成了「乌台之前」和「乌台之后」。</div>
+  `,
+  continue: "huangzhou_arrive"
+},
+
+"huangzhou_arrive": {
+  chapter: "第三章 · 黄州初到",
+  year: "元丰三年 · 二月",
+  content: `
+    <div class="scene-transition">
+      <div class="transition-year">元丰三年</div>
+      <div class="transition-desc">黄 州</div>
+    </div>
+    <div class="ink-wash-divider"></div>
+    <div class="scene-desc">长江南岸。黄州。一座偏僻的小城。</div>
+    <div class="story-text">
+      <p>你带着家人到了黄州。没有官邸，没有俸禄，一家老小二十多口人挤在一间借来的旧屋里。</p>
+      <p>从前你是当朝名士，出门前呼后拥；现在你是戴罪之身，连本地官员都不太敢跟你来往。</p>
+      <p>第一个月的生活费很快就花完了。你妻子王闰之开始精打细算——每月初一取出固定数额的铜钱，分成三十份挂在房梁上，每天只许取一份。</p>
+    </div>
+    <div class="story-text">
+      <p>一天傍晚，你站在江边，看着浑浊的江水。你四十三岁了，从天之骄子变成了阶下囚，从朝廷命官变成了无业游民。</p>
+    </div>
+  `,
+  choices: [
+    { text: "给京城的朋友写信，想办法调回去。你不甘心就这样被埋没。", next: "huangzhou_resist", trait: "idealism", value: 2, flash: "入世之心未灭" },
+    { text: "既来之则安之。先想办法解决吃饭问题。", next: "huangzhou_settle", trait: "resilience", value: 2, flash: "务实求生" },
+    { text: "找个安静的地方喝酒写诗。管他的，先把心里的苦闷倒出来。", next: "huangzhou_art", trait: "connection", value: 1, flash: "以文字疗愈自我" }
+  ]
+},
+
+"huangzhou_resist": {
+  chapter: "第三章 · 黄州初到",
+  year: "元丰三年 · 春",
+  content: `
+    <div class="story-text">
+      <p>你写了几封信，小心翼翼地措辞，试探朝中旧友的态度。</p>
+      <p>回信很慢。有的人回了，字里行间都是客气的疏远；有的人根本没回。你明白了——乌台诗案不只关了你一个人，它吓住了所有人。谁都不敢跟你走得太近。</p>
+      <p>你把信烧了，站在院子里看天。黄州的天倒是很大很干净，不像京城，总是灰蒙蒙的。</p>
+      <p>算了。调不回去就调不回去。</p>
+      <p>你开始认真打量这座小城。</p>
+    </div>
+  `,
+  continue: "east_slope"
+},
+
+"huangzhou_settle": {
+  chapter: "第三章 · 黄州初到",
+  year: "元丰三年 · 春",
+  content: `
+    <div class="story-text">
+      <p>你开始盘算。没有俸禄，坐吃山空不是办法。</p>
+      <p>你听说城东有一片荒地，以前是军营，现在没人管。你跑去看了看——荒草齐腰，泥地板结，但面积不小。</p>
+      <p>你做了一个在朝中同僚看来不可思议的决定：你苏轼，进士出身、三品大员，要去种地。</p>
+      <p>你跟当地农民借了工具，卷起袖子开始翻地。手上磨出的水泡破了又长，长了又破。你妻子心疼你，你笑着说：「陶渊明种地种出了名堂，我也试试。」</p>
+    </div>
+  `,
+  continue: "east_slope"
+},
+
+"huangzhou_art": {
+  chapter: "第三章 · 黄州初到",
+  year: "元丰三年 · 春",
+  content: `
+    <div class="story-text">
+      <p>你找到了城里唯一还愿意跟你喝酒的人——一个叫潘丙的卖酒老头。他不懂诗词，不关心朝政，只知道你苏大人是个好酒客。</p>
+      <p>你在他的酒铺里喝到深夜，然后踉跄着走到江边。月光照在江面上，你突然想写点什么。</p>
+      <p>但写什么呢？从前你写诗是为了议政、讽喻、表达自己对天下的看法。现在天下跟你没关系了。你只是一个被放逐的人，站在一条陌生的江边，喝了太多酒。</p>
+      <p>你还是写了。不为任何人，只为自己。</p>
+    </div>
+  `,
+  continue: "east_slope"
+},
+
+"east_slope": {
+  chapter: "第四章 · 东坡",
+  year: "元丰三年至五年",
+  content: `
+    <div class="scene-transition">
+      <div class="transition-year">东 坡</div>
+      <div class="transition-desc">一个名字的诞生</div>
+    </div>
+    <div class="ink-wash-divider"></div>
+    <div class="story-text">
+      <p>日子一天天过去。你真的种起了地。城东那片荒坡被你开垦出来，种上了庄稼。你给它起了个名字——「东坡」。</p>
+      <p>从此你不再叫自己苏轼了。你叫苏东坡。</p>
+      <p>一个前朝名士在田间劳作，这件事在黄州传开了。有人笑话你，但更多人开始对你产生了一种奇怪的亲近感——你不再是高高在上的苏大人，你是一个会种地、会做饭、会跟卖酒老头喝酒的普通人。</p>
+    </div>
+    <div class="story-text">
+      <p>你发明了一道菜：猪肉切大块，小火慢炖，加黄酒和酱油。你管它叫「东坡肉」。这道菜后来传遍了天下，一千年后还有人在做。</p>
+      <p>但内心深处，你并不平静。深夜里你还是会想起乌台的牢房、朋友们因你受到的牵连、和这辈子可能再也回不去的朝堂。</p>
+    </div>
+  `,
+  choices: [
+    { text: "去赤壁看看。你听说城外有个叫赤壁的地方，江面开阔。", next: "chibi", trait: "connection", value: 2 },
+    { text: "去寺里坐坐。你最近开始对佛学感兴趣。", next: "temple", trait: "resilience", value: 2 }
+  ]
+},
+
+"chibi": {
+  chapter: "第五章 · 赤壁",
+  year: "元丰五年 · 七月",
+  content: `
+    <div class="scene-desc">壬戌之秋，七月既望。苏子与客泛舟游于赤壁之下。</div>
+    <div class="story-text">
+      <p>你和几个朋友借了一条小船，夜游赤壁。</p>
+      <p>江面开阔，月光如银。有人带了酒，有人带了箫。你们在船上喝酒、唱歌，箫声呜咽，飘过江面。</p>
+      <p>你看着眼前的赤壁矶——当年曹操八十万大军南下，就在这一带折戟沉沙。如今英雄们都去了哪里？只剩下这条江还在流。</p>
+      <p>你喝了一口酒，突然觉得通透了。</p>
+    </div>
+    <div class="dialogue">
+      <div class="dialogue-speaker">你（苏东坡）</div>
+      <div class="dialogue-text">天地之间，万物各有其主。不是自己的东西，一分一毫也拿不到。但这江上的清风、山间的明月，耳朵听到就是音乐，眼睛看到就是美景——这些是取之不尽的，是造物者给所有人的礼物。</div>
+    </div>
+    <div class="story-text">
+      <p>你回去写下了《赤壁赋》。这篇文章让你重新站到了中国文学的最顶端——不是以一个愤怒的批评者，而是以一个看透了人生起落的人。</p>
+    </div>
+  `,
+  continue: "hanshi"
+},
+
+"temple": {
+  chapter: "第五章 · 安国寺",
+  year: "元丰三年至五年",
+  content: `
+    <div class="story-text">
+      <p>你开始频繁地去安国寺。不是因为信佛，而是因为那里安静。</p>
+      <p>住持继连和尚跟你年纪相仿，话不多，但每次你去，他都会泡好茶等你。你们有时聊到深夜，有时什么都不说，就坐在院子里听风。</p>
+      <p>有一天你问他：「大师，我这辈子是不是做错了什么？」</p>
+      <p>继连看着你，说了一句：「施主不是做错了什么，是想要的太多。」</p>
+      <p>你愣了很久。他说得对。你想当好官、想写好诗、想让天下人都过上好日子、想让朝廷走上正确的路。你什么都想要，所以什么都放不下。</p>
+    </div>
+    <div class="story-text">
+      <p>你开始学着放下一些东西。不是放弃，是接受——接受有些事情不是你能改变的。</p>
+    </div>
+  `,
+  continue: "hanshi"
+},
+
+"hanshi": {
+  chapter: "第六章 · 寒食雨",
+  year: "元丰五年 · 寒食节",
+  content: `
+    <div class="scene-transition">
+      <div class="transition-year">元丰五年</div>
+      <div class="transition-desc">寒 食 节</div>
+    </div>
+    <div class="ink-wash-divider"></div>
+    <div class="scene-desc">春天。连日阴雨。寒食节不许生火，只能吃冷食。</div>
+    <div class="story-text">
+      <p>来黄州已经三年了。</p>
+      <p>寒食节这天，雨下个不停。你坐在漏雨的屋子里，灶台冷着，孩子们嚷嚷肚子饿。你看着满地的泥水，忽然想笑——堂堂苏学士，连灶都生不起。</p>
+      <p>你铺开纸，随手写了两首诗。不是为了给谁看，就是心里的话憋不住了。</p>
+      <p>写到最后一句——「也拟哭途穷，死灰吹不起」——你停了笔。手在发抖。不是冷的，是你突然意识到自己真的走到了人生的最低处。</p>
+    </div>
+    <div class="story-text">
+      <p>但诗写完之后，你觉得好了一些。好像把心里最重的那块石头搬了出来，摆在纸上看了看，也就那么回事。</p>
+    </div>
+  `,
+  choices: [
+    { text: "把诗烧了。太丧了，不想让别人看到这样的自己。", next: "ending_choice_burn", trait: "courage", value: -1 },
+    { text: "留着。这就是你此刻最真实的样子，没什么好藏的。", next: "ending_choice_keep", trait: "courage", value: 2, flash: "坦然面对真实的自己" }
+  ]
+},
+
+"ending_choice_burn": {
+  chapter: "第六章 · 寒食雨",
+  year: "元丰五年",
+  content: `
+    <div class="story-text">
+      <p>你把纸揉成一团，想扔进火里——然后想起来今天寒食节，不能生火。</p>
+      <p>你看着手里皱巴巴的纸，突然笑了出来。想烧都烧不了，这大概就是命。</p>
+      <p>你把纸展开，抚平，放在桌上晾干。</p>
+      <p>好吧，留着就留着。</p>
+    </div>
+  `,
+  continue: "ending"
+},
+
+"ending_choice_keep": {
+  chapter: "第六章 · 寒食雨",
+  year: "元丰五年",
+  content: `
+    <div class="story-text">
+      <p>你把诗放在桌上晾干。墨迹歪歪扭扭的——你写的时候手确实在抖。</p>
+      <p>后来这两首诗和你写的字被合称为《寒食帖》，成为中国书法史上「天下第三行书」。一千年后，人们在博物馆的玻璃柜前排队，只为看一眼你当年在漏雨的房子里写下的那些歪歪扭扭的字。</p>
+      <p>但此刻的你并不知道这些。你只知道雨还在下，肚子很饿，明天应该去东坡看看地里的菜淹了没有。</p>
+    </div>
+  `,
+  continue: "ending"
+},
+
+"ending": {
+  chapter: "尾声",
+  year: "",
+  content: "ENDING",
+  isEnding: true
+}
+
+};
+
+// ========== GAME FUNCTIONS ==========
+
+function switchScreen(from, to) {
+  const fromEl = document.getElementById(from);
+  const toEl = document.getElementById(to);
+  fromEl.classList.add('fade-out');
+  setTimeout(() => {
+    fromEl.classList.remove('active', 'fade-out');
+    toEl.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, 500);
+}
+
+function updateProgress() {
+  const pct = (state.nodeCount / state.totalNodes) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function showFlash(text) {
+  if (!text) return;
+  const el = document.getElementById('personalityFlash');
+  el.textContent = text;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+function getTraitProfile() {
+  const t = state.traits;
+  let lines = [];
+
+  if (t.courage >= 3) lines.push('你在逆境中选择了正面对抗，不肯低头。');
+  else if (t.courage <= -1) lines.push('你更倾向于保存实力，等待时机。');
+  else lines.push('你在刚与柔之间寻找平衡。');
+
+  if (t.idealism >= 2) lines.push('即使身处低谷，你心中仍有不甘。入世之心未灭。');
+  else if (t.resilience >= 3) lines.push('你展现出极强的适应力，能在任何处境中扎下根来。');
+  else lines.push('你用自己的方式消化着命运的打击。');
+
+  if (t.connection >= 2) lines.push('你在孤独中寻找与天地的连接，试图从更大的尺度理解人生。');
+
+  return lines.join('<br><br>');
+}
+
+function renderNode(nodeId) {
+  const node = story[nodeId];
+  state.currentNode = nodeId;
+  state.nodeCount++;
+  updateProgress();
+
+  if (node.isEnding) {
+    renderEnding();
+    return;
+  }
+
+  document.getElementById('chapterLabel').textContent = node.chapter;
+  document.getElementById('yearLabel').textContent = node.year;
+
+  const body = document.getElementById('narrativeBody');
+
+  let html = node.content;
+
+  if (node.choices) {
+    html += `<div class="choices-container"><div class="choices-prompt">— 你的选择 —</div>`;
+    node.choices.forEach((c, i) => {
+      html += `<button class="choice-btn" onclick="makeChoice('${c.next}', '${c.trait}', ${c.value}, '${c.flash || ''}')">
+        ${c.text}
+      </button>`;
+    });
+    html += `</div>`;
+  } else if (node.continue) {
+    html += `<button class="btn-continue" onclick="renderNode('${node.continue}')">继 续</button>`;
+  }
+
+  body.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (nodeId !== state.currentNode) return;
+  if (document.getElementById('narrative-screen').classList.contains('active') === false) {
+    switchScreen('title-screen', 'narrative-screen');
+  }
+}
+
+function makeChoice(next, trait, value, flash) {
+  state.traits[trait] += value;
+  state.choices.push({ node: state.currentNode, choice: next, trait, value });
+  if (flash) showFlash(flash);
+  setTimeout(() => renderNode(next), 300);
+}
+
+function renderEnding() {
+  switchScreen('narrative-screen', 'ending-screen');
+
+  const profile = getTraitProfile();
+  const totalChoices = state.choices.length;
+
+  document.getElementById('endingContent').innerHTML = `
+    <div class="title-era" style="margin-bottom:2rem;">尾 声</div>
+    <div class="ending-poem">
+      黄州之后的苏东坡，再也不是从前那个苏轼了。<br>
+      他不再是那个锋芒毕露的天才，<br>
+      而是一个经历过至暗时刻、<br>
+      依然选择好好活着的人。
+    </div>
+    <div class="ink-wash-divider"></div>
+    <div class="ending-stats">
+      <div class="stat-item">
+        <div class="stat-num">${totalChoices}</div>
+        <div class="stat-label">次抉择</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-label">年黄州岁月</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1</div>
+        <div class="stat-label">次重生</div>
+      </div>
+    </div>
+    <div class="ending-reflection">
+      <div class="ending-reflection-title">— 你的选择映射 —</div>
+      <div class="ending-reflection-text">${profile}</div>
+    </div>
+    <p style="font-size:0.85rem; color:var(--ink-faint); margin-bottom:2.5rem; line-height:1.9;">
+      你在苏东坡的人生里做出的每一个选择，<br>其实都是你自己面对逆境时的本能反应。
+    </p>
+    <button class="btn-restart" onclick="restart()">重 新 体 验</button>
+  `;
+}
+
+function startGame() {
+  switchScreen('title-screen', 'narrative-screen');
+  setTimeout(() => renderNode('start'), 600);
+}
+
+function restart() {
+  state.currentNode = null;
+  state.choices = [];
+  state.traits = { courage: 0, idealism: 0, connection: 0, resilience: 0 };
+  state.nodeCount = 0;
+  document.getElementById('progressBar').style.width = '0%';
+  switchScreen('ending-screen', 'title-screen');
+}
+</script>
+
+</body>
+</html>

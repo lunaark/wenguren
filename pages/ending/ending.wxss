@@ -1,0 +1,231 @@
+.ending-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(184, 150, 62, 0.08) 0%, transparent 60%),
+    var(--paper);
+}
+
+.ending-container {
+  max-width: 100%;
+  padding: 0 48rpx 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* === 尾声标签 === */
+.ending-label {
+  display: block;
+  font-size: 24rpx;
+  letter-spacing: 0.5em;
+  color: var(--ink-faint);
+  margin-bottom: 60rpx;
+  text-align: center;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 300ms forwards;
+}
+
+/* === 尾声文字 === */
+.ending-epilogue {
+  text-align: center;
+  margin-bottom: 60rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 600ms forwards;
+}
+
+.epilogue-line {
+  display: block;
+  font-size: 30rpx;
+  line-height: 2.2;
+  color: var(--ink);
+}
+
+/* === 分隔符 === */
+.ending-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60%;
+  margin-bottom: 60rpx;
+  gap: 20rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 900ms forwards;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(42, 31, 26, 0.1), transparent);
+}
+
+.divider-diamond {
+  font-size: 16rpx;
+  color: var(--accent-gold);
+}
+
+/* === 统计数据 === */
+.ending-stats {
+  display: flex;
+  justify-content: center;
+  gap: 80rpx;
+  margin-bottom: 60rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 1100ms forwards;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-num {
+  display: block;
+  font-size: 56rpx;
+  font-weight: 200;
+  color: var(--accent-gold);
+}
+
+.stat-label {
+  display: block;
+  font-size: 22rpx;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+  margin-top: 8rpx;
+}
+
+/* === 性格分析 === */
+.ending-analysis {
+  width: 100%;
+  padding: 40rpx;
+  background: rgba(226, 213, 191, 0.3);
+  border-radius: 12rpx;
+  margin-bottom: 60rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 1400ms forwards;
+}
+
+.analysis-title {
+  display: block;
+  font-size: 24rpx;
+  letter-spacing: 0.3em;
+  color: var(--accent-gold);
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.analysis-item {
+  margin-bottom: 24rpx;
+}
+
+.analysis-item:last-child {
+  margin-bottom: 0;
+}
+
+.analysis-text {
+  font-size: 28rpx;
+  line-height: 2;
+  color: var(--ink-light);
+}
+
+/* === 反思文字 === */
+.ending-reflection {
+  text-align: center;
+  margin-bottom: 60rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 1700ms forwards;
+}
+
+.reflection-line {
+  display: block;
+  font-size: 26rpx;
+  line-height: 2;
+  color: var(--ink-faint);
+}
+
+/* === 分享按钮 === */
+.ending-share {
+  width: 100%;
+  margin-bottom: 32rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 1800ms forwards;
+}
+
+.btn-share {
+  width: 100%;
+  padding: 24rpx 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 28rpx;
+  letter-spacing: 0.3em;
+  border-radius: 8rpx;
+  border: none;
+  line-height: 1.5;
+}
+
+.btn-share::after {
+  border: none;
+}
+
+.btn-share:active {
+  opacity: 0.85;
+}
+
+/* === 按钮区 === */
+.ending-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 60rpx;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 2100ms forwards;
+}
+
+.btn-action {
+  padding: 20rpx 56rpx;
+  border: 1rpx solid var(--ink-light);
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  transition: all 300ms ease;
+}
+
+.btn-action:active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* === 预告卡片 === */
+.ending-coming-soon {
+  text-align: center;
+  padding: 40rpx;
+  background: rgba(226, 213, 191, 0.2);
+  border-radius: 12rpx;
+  border: 1rpx dashed rgba(184, 150, 62, 0.3);
+  width: 100%;
+  opacity: 0;
+  animation: fadeInUp 800ms ease 2400ms forwards;
+}
+
+.coming-soon-line {
+  display: block;
+  font-size: 24rpx;
+  line-height: 2;
+  color: var(--ink-faint);
+  letter-spacing: 0.1em;
+}
+
+/* === 底部留白 === */
+.bottom-spacer {
+  height: 80rpx;
+}
+
+/* === 动画 === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
