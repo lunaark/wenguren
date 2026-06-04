@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问古人 — 与历史人物对话</title>
+<style>
+  :root {
+    --ink: #2A1F1A;
+    --ink-light: #5C4A3A;
+    --ink-faint: #8B7355;
+    --paper: #F4EDE0;
+    --paper-warm: #EDE4D3;
+    --accent-gold: #B8963E;
+    --accent-vermilion: #C84B31;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Noto Serif SC", serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .container {
+    max-width: 480px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 2.4rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--ink-faint);
+    margin-bottom: 3rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .card {
+    display: block;
+    padding: 1.8rem 2rem;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(42,31,26,0.1);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.3s ease;
+    text-align: left;
+  }
+
+  .card:hover {
+    border-color: var(--accent-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(42,31,26,0.08);
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+
+  .card-desc {
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  .card-tag {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-playable {
+    background: rgba(91,140,111,0.15);
+    color: #5B8C6F;
+  }
+
+  .tag-demo {
+    background: rgba(200,75,49,0.1);
+    color: var(--accent-vermilion);
+  }
+
+  .footer {
+    margin-top: 3rem;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+  }
+
+  .footer a {
+    color: var(--accent-gold);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>问古人</h1>
+  <p class="subtitle">穿越时空，与历史人物对话</p>
+
+  <div class="cards">
+    <a class="card" href="su-dongpo-demo.html">
+      <div class="card-title">试为苏东坡 — 乌台诗案</div>
+      <div class="card-desc">从乌台诗案到黄州寒食，在互动叙事中体验苏东坡的至暗与重生。你的每一个选择都会被记录。</div>
+      <span class="card-tag tag-playable">可体验</span>
+    </a>
+
+    <a class="card" href="ai-chat-demo.html">
+      <div class="card-title">对话张居正</div>
+      <div class="card-desc">与明朝铁腕首辅面对面。他记得你做过的每一个选择。（当前为 UI 演示，AI 对话开发中）</div>
+      <span class="card-tag tag-demo">Demo</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    开源项目 · <a href="https://github.com/lunaark/wenguren">GitHub</a>
+  </div>
+</div>
+</body>
+</html>
